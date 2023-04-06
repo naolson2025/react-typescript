@@ -2,7 +2,9 @@ import ReactDOM from "react-dom";
 import { useEffect, useState, useRef } from "react";
 // import esbuild web assembly. This is a special version of esbuild that runs in the browser
 import * as esbuild from "esbuild-wasm";
+// are own custom plugin
 import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
+import { fetchPlugin } from "./plugins/fetch-plugin";
 
 const App = () => {
   // using ref instead of state because we don't want to re-render the esbuild component when the value changes
@@ -28,7 +30,8 @@ const App = () => {
       entryPoints: ["index.js"],
       bundle: true,
       write: false,
-      plugins: [unpkgPathPlugin()],
+      // provide custom plugin to esbuild
+      plugins: [unpkgPathPlugin(), fetchPlugin(input)],
       define: {
         "process.env.NODE_ENV": '"production"',
         global: "window",
