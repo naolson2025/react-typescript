@@ -38,6 +38,12 @@ const App = () => {
       }
     });
     setCode(result.outputFiles[0].text);
+
+    try {
+      eval(result.outputFiles[0].text)
+    } catch (error) {
+      alert(error);
+    }
   }
 
   // esbuild runs in the browser and can transpile & bundle code
@@ -45,7 +51,10 @@ const App = () => {
     // example of using a ref on a function component
     ref.current = await esbuild.startService({
       worker: true,
-      wasmURL: "/esbuild.wasm",
+      wasmURL: 'https://unpkg.com/esbuild-wasm@0.8.27/esbuild.wasm',
+      // wasmURL: 'https://cdn.jsdelivr.net/npm/esbuild-wasm/esbuild.wasm',
+      // can also use a local version of esbuild.wasm
+      // wasmURL: "/esbuild.wasm",
     });
   };
 
@@ -60,6 +69,7 @@ const App = () => {
       <button onClick={onClick}>Submit</button>
     </div>
     <pre>{code}</pre>
+    <iframe src='/test.html' sandbox='allow-scripts' />
   </div>;
 };
 

@@ -18,17 +18,21 @@ export const fetchPlugin = (inputCode: string) => {
   return {
     name: 'fetch-plugin',
     setup(build: esbuild.PluginBuild) {
-      // override esbuilds default behavior of loading a file
-      // from the file system. Instead, we will load it from
-      // unpkg.com
+      // each onload will only execute if there is a file that matches
+      // the filter. If there is no match, esbuild will continue to the
+      // next plugin or the default behavior
+      build.onLoad({ filter: /(^index\.js$)/ }, () => {
+        return {
+          loader: 'jsx',
+          contents: inputCode,
+        };
+      });
+
+      // as long as we don't return a result, esbuild will continue to
+      // the next plugin or the default behavior
+      // this will run for every file that is loaded
+      // so we can store common code here to execute on every file
       build.onLoad({ filter: /.*/ }, async (args: any) => {
-        if (args.path === 'index.js') {
-          return {
-            loader: 'jsx',
-            contents: inputCode,
-          };
-        }
-  
         // check to see if we have already fetched this file
         // and if it is in the cache
         const cachedResult = await fileCache.getItem<esbuild.OnLoadResult>(args.path);
@@ -37,24 +41,43 @@ export const fetchPlugin = (inputCode: string) => {
         if (cachedResult) {
           return cachedResult;
         }
-  
+        return null;
+      });
+
+      build.onLoad({ filter: /.css$/ }, async (args: any) => {  
         const { data, request } = await axios.get(args.path);
 
-        // match the file type
-        const fileType = args.path.match(/.css$/) ? 'css' : 'jsx';
-
         // hacky workaround for css files
-        // insert css into a style tag with JS
-        const contents = fileType === 'css' ?
-          `
+        // insert css into a style tag with JS, need to escape quotes
+        const escaped = data
+          .replace(/\n/g, '')
+          .replace(/"/g, '\\"')
+          .replace(/'/g, "\\'");
+        const contents = `
           const style = document.createElement('style');
-          style.innerText = 'body { background-color: "red" }';
+          style.innerText = '${escaped}';
           document.head.appendChild(style);
-          ` : data;
+          `;
 
         const result: esbuild.OnLoadResult = {
           loader: 'jsx',
           contents,
+          resolveDir: new URL('./', request.responseURL).pathname,
+        };
+        // store response in cache
+        await fileCache.setItem(args.path, result);
+  
+        return result;
+      });
+      // override esbuilds default behavior of loading a file
+      // from the file system. Instead, we will load it from
+      // unpkg.com
+      build.onLoad({ filter: /.*/ }, async (args: any) => {  
+        const { data, request } = await axios.get(args.path);
+
+        const result: esbuild.OnLoadResult = {
+          loader: 'jsx',
+          contents: data,
           resolveDir: new URL('./', request.responseURL).pathname,
         };
         // store response in cache
