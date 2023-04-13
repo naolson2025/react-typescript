@@ -6,6 +6,7 @@ import * as esbuild from 'esbuild-wasm';
 import { unpkgPathPlugin } from './plugins/unpkg-path-plugin';
 import { fetchPlugin } from './plugins/fetch-plugin';
 import { CodeEditor } from './components/code-editor';
+import 'bulmaswatch/superhero/bulmaswatch.min.css'
 
 const App = () => {
   // using ref instead of state because we don't want to re-render the esbuild component when the value changes
@@ -79,7 +80,10 @@ const App = () => {
 
   return (
     <div>
-      <CodeEditor />
+      <CodeEditor
+        initialValue='const a = 1;'
+        onChange={(value) => setInput(value)}
+      />
       <textarea
         onChange={(e) => setInput(e.target.value)}
         value={input}
