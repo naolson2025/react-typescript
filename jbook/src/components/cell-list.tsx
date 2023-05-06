@@ -10,21 +10,23 @@ const CellList: React.FC = () => {
 
   // destructure the data we want from the redux store
   // then map through the order array and add the cell data
+  // the selector is a way to get drived state from the redux store
+  // meaning the data is dependent on the cells state
   const cells = useTypedSelector(({ cells: { order, data } }) =>
     order.map((id) => data[id])
   );
 
   const renderedCells = cells.map((cell) => (
     <Fragment key={cell.id}>
-      <AddCell nextCellId={cell.id} />
       <CellListItem key={cell.id} cell={cell} />
+      <AddCell previousCellId={cell.id} />
     </Fragment>
   ));
 
   return (
     <div>
+      <AddCell forceVisible={cells.length === 0} previousCellId={null} />
       {renderedCells}
-      <AddCell nextCellId={null} />
     </div>
   );
 };
