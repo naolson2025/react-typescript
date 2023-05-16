@@ -30,6 +30,10 @@ const bundler = async (rawCode: string) => {
         'process.env.NODE_ENV': '"production"',
         global: 'window',
       },
+      // we hard coded _React.createElement and _React.Fragment in the code
+      // so we need to tell esbuild to use those instead of React.createElement and React.Fragment
+      jsxFactory: '_React.createElement',
+      jsxFragment: '_React.Fragment',
     });
     return {
       code: result.outputFiles[0].text,

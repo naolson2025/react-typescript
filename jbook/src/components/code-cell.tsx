@@ -6,6 +6,7 @@ import Resizable from './resizable';
 import { Cell } from '../state';
 import { useActions } from '../hooks/use-actions';
 import { useTypedSelector } from '../hooks/use-typed-selector';
+import { useCumulativeCode } from '../hooks/use-cumulative-code';
 
 interface CodeCellProps {
   cell: Cell;
@@ -15,31 +16,7 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   // update cell in redux store
   const { updateCell, createBundle } = useActions();
   const bundle = useTypedSelector((state) => state.bundles[cell.id]);
-  // the purpose cumulativeCode so to allow code cells to access
-  // variables declared in previous cells
-  const cumulativeCode = useTypedSelector((state) => {
-    // get all the cells before the current cell
-    // and join their content together
-    // this will be the code that will be sent to the bundler
-    const { data, order } = state.cells;
-    const orderedCells = order.map((id) => data[id]);
-    // get the content of all the cells
-    const cumulativeCode = [];
-    for (let c of orderedCells) {
-      // if the cell is a code cell
-      if (c.type === 'code') {
-        // add the content of the cell to cumulativeCode
-        cumulativeCode.push(c.content);
-      }
-      if (c.id === cell.id) {
-        // if we are at the current cell, stop
-        break;
-      }
-    }
-    return cumulativeCode;
-  });
-
-  console.log(cumulativeCode);
+  const cumulativeCode = useCumulativeCode(cell.id);
 
   // debouncing
   // we don't want to run the bundler every time the user types
@@ -48,12 +25,12 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   useEffect(() => {
     // if there is no bundle, create and return without debouncing
     if (!bundle) {
-      createBundle(cell.id, cell.content);
+      createBundle(cell.id, cumulativeCode);
       return;
     }
 
     const timer = setTimeout(async () => {
-      createBundle(cell.id, cell.content);
+      createBundle(cell.id, cumulativeCode);
     }, 1000);
 
     // clean up function
@@ -63,7 +40,7 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
       clearTimeout(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cell.content, cell.id, createBundle]);
+  }, [cumulativeCode, cell.id, createBundle]);
 
   return (
     <Resizable direction="vertical">
