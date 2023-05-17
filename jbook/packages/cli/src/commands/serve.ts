@@ -7,6 +7,11 @@ interface LocalApiError {
   code: string;
 }
 
+// we will set up a script in package.json to replace process.env.NODE_ENV
+// with 'production' so that when the project is packaged and deployed
+// it will always run in production mode
+const isProduction = process.env.NODE_ENV === 'production'
+
 export const serveCommand = new Command()
   // square brackets mean optional
   .command('serve [filename]')
@@ -20,7 +25,7 @@ export const serveCommand = new Command()
 
     try {
       const dir = path.join(process.cwd(), path.dirname(filename))
-      await serve(parseInt(options.port), path.basename(filename), dir, false)
+      await serve(parseInt(options.port), path.basename(filename), dir, !isProduction)
       console.log(
         `Opened ${filename}. Navigate to http://localhost:${options.port} to edit the file.`
       );
