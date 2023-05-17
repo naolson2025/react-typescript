@@ -18,6 +18,7 @@ export const serve = async (
 ) => {
   const app = express()
 
+  app.use(createCellsRouter(filename, dir))
   if (useProxy) {
     // this middleware will redirect us to the create-react-app server
     // when we are developing
@@ -34,7 +35,6 @@ export const serve = async (
     app.use(express.static(path.dirname(packagePath)));
   }
 
-  app.use(createCellsRouter(filename, dir))
 
   // the purpose of wrapping express in a promise is to improve the error handling
   // express doesn't have a good way to handle async errors

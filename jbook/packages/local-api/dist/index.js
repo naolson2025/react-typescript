@@ -25,6 +25,7 @@ const cells_1 = require("./routes/cells");
 // 3. POST /cells -> add a cell to the file
 const serve = (port, filename, dir, useProxy) => __awaiter(void 0, void 0, void 0, function* () {
     const app = (0, express_1.default)();
+    app.use((0, cells_1.createCellsRouter)(filename, dir));
     if (useProxy) {
         // this middleware will redirect us to the create-react-app server
         // when we are developing
@@ -41,7 +42,6 @@ const serve = (port, filename, dir, useProxy) => __awaiter(void 0, void 0, void 
         // path.dirname will return the directory name of the path
         app.use(express_1.default.static(path_1.default.dirname(packagePath)));
     }
-    app.use((0, cells_1.createCellsRouter)(filename, dir));
     // the purpose of wrapping express in a promise is to improve the error handling
     // express doesn't have a good way to handle async errors
     // this way when the cli serve.ts file calls this function if there is an error

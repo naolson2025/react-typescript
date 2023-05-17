@@ -1,8 +1,9 @@
 import { useTypedSelector } from '../hooks/use-typed-selector';
 import CellListItem from './cell-list-item';
 import AddCell from './add-cell';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import './cell-list.css'
+import { useActions } from '../hooks/use-actions';
 
 const CellList: React.FC = () => {
   // used to get the type of the redux store
@@ -16,6 +17,12 @@ const CellList: React.FC = () => {
   const cells = useTypedSelector(({ cells: { order, data } }) =>
     order.map((id) => data[id])
   );
+  const { fetchCells } = useActions();
+
+  useEffect(() => {
+    fetchCells();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderedCells = cells.map((cell) => (
     <Fragment key={cell.id}>
