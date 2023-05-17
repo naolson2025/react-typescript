@@ -21,8 +21,8 @@
   },
   "devDependencies": {
     "@naolson-jsnote/local-api": "^1.0.0",
-    "commander": "^10.0.1",
     "@types/node": "^20.1.7",
+    "commander": "^10.0.1",
     "esbuild": "0.8.26",
     "typescript": "^5.0.4"
   }
