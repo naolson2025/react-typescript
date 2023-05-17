@@ -1,19 +1,29 @@
 {
-  "name": "cli",
+  "name": "naolson-jsnote",
   "version": "1.0.0",
   "description": "",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": "dist/index.js",
   "scripts": {
-    "start": "tsc --watch --preserveWatchOutput"
+    "start": "tsc --watch --preserveWatchOutput",
+    "prepublishOnly": "esbuild src/index.ts --bundle --minify --platform=node --outfile=dist/index.js --define:process.env.NODE_ENV=\\\"production\\\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "commander": "^10.0.1",
-    "local-api": "^1.0.0"
+    "@naolson-jsnote/local-client": "^1.0.0"
   },
   "devDependencies": {
+    "@naolson-jsnote/local-api": "^1.0.0",
+    "commander": "^10.0.1",
     "@types/node": "^20.1.7",
+    "esbuild": "0.8.26",
     "typescript": "^5.0.4"
   }
 }

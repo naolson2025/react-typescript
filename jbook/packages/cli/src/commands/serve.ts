@@ -1,6 +1,6 @@
 // uses commander to invoke this from the command line
 import { Command } from 'commander';
-import { serve } from 'local-api';
+import { serve } from '@naolson-jsnote/local-api';
 import path from 'path'
 
 interface LocalApiError {

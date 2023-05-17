@@ -30,7 +30,7 @@ export const serve = async (
     }))
   } else {
     // this middleware will load production assets from the build folder
-    const packagePath = require.resolve('local-client/build/index.html')
+    const packagePath = require.resolve('@naolson-jsnote/local-client/build/index.html')
     // path.dirname will return the directory name of the path
     app.use(express.static(path.dirname(packagePath)));
   }

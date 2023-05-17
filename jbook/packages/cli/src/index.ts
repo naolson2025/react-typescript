@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+
+// The above comment specifies this file is the entry point for the CLI
 import { program } from "commander";
 import { serveCommand } from "./commands/serve";
 

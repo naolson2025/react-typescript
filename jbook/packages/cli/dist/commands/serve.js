@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.serveCommand = void 0;
 // uses commander to invoke this from the command line
 const commander_1 = require("commander");
-const local_api_1 = require("local-api");
+const local_api_1 = require("@naolson-jsnote/local-api");
 const path_1 = __importDefault(require("path"));
 // we will set up a script in package.json to replace process.env.NODE_ENV
 // with 'production' so that when the project is packaged and deployed
